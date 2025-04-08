@@ -4,22 +4,59 @@
     <title>Book List</title>
 </head>
 <body>
-    <h1>Book List</h1>
-    <table border="1">
-        <thead>
-            <tr>
-                <th>Title</th>
-                <th>Author</th>
-                <th>Price</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr th:each="book : ${books}">
-                <td th:text="${book.title}">Title</td>
-                <td th:text="${book.author}">Author</td>
-                <td th:text="${book.price}">0.00</td>
-            </tr>
-        </tbody>
-    </table>
+<h1>Book List</h1>
+
+<p><a th:href="@{/add-book}"> Add a New Book</a></p>
+
+
+<form method="get" th:action="@{/booklist}">
+    Search:
+    <select name="searchField">
+        <option value="title" th:selected="${searchField} == 'title'">Title</option>
+        <option value="author" th:selected="${searchField} == 'author'">Author</option>
+        <option value="publisher" th:selected="${searchField} == 'publisher'">Publisher</option>
+        <option value="category" th:selected="${searchField} == 'category'">Category</option>
+    </select>
+    <input type="text" name="searchTerm" th:value="${searchTerm}">
+    Sort by:
+    <select name="sortField">
+        <option value="title" th:selected="${sortField} == 'title'">Title</option>
+        <option value="author" th:selected="${sortField} == 'author'">Author</option>
+        <option value="price" th:selected="${sortField} == 'price'">Price</option>
+    </select>
+    <select name="sortDir">
+        <option value="asc" th:selected="${sortDir} == 'asc'">Ascending</option>
+        <option value="desc" th:selected="${sortDir} == 'desc'">Descending</option>
+    </select>
+    <button type="submit">Apply</button>
+</form>
+
+<table border="1">
+    <thead>
+    <tr>
+        <th>Title</th>
+        <th>Author</th>
+        <th>Publisher</th>
+        <th>Category</th>
+        <th>Price</th>
+        <th>ISBN</th>
+        <th>Stock</th>
+        <th>Image</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="book : ${books}">
+        <td th:text="${book.title}"></td>
+        <td th:text="${book.author}"></td>
+        <td th:text="${book.publisher}"></td>
+        <td th:text="${book.category}"></td>
+        <td th:text="${book.price}"></td>
+        <td th:text="${book.isbn}"></td>
+        <td th:text="${book.stock}"></td>
+        <td><img th:src="@{/images/book.png}" alt="Book Cover" width="50"/></td>
+    </tr>
+    </tbody>
+</table>
+
 </body>
 </html>

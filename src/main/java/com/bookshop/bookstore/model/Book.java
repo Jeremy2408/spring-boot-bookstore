@@ -21,5 +21,4 @@ public class Book {
     private String isbn;
     private double price;
     private int stock;
-    private String imageUrl;
 }
