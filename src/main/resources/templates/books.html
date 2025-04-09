@@ -1,12 +1,28 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
 <head>
     <title>Book List</title>
 </head>
 <body>
 <h1>Book List</h1>
 
-<p><a th:href="@{/add-book}"> Add a New Book</a></p>
+<p>
+    <span sec:authorize="hasRole('ADMIN')">
+        <a th:href="@{/add-book}"> Add a New Book</a> |
+    </span>
+    <a th:href="@{/account}"> My Account</a> |
+    <form th:action="@{/logout}" method="post" style="display:inline;">
+        <button type="submit"> Logout</button>
+    </form>
+</p>
+
+
+
+
+
+
 
 
 <form method="get" th:action="@{/booklist}">

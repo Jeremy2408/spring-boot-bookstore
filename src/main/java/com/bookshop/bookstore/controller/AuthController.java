@@ -2,6 +2,9 @@ package com.bookshop.bookstore.controller;
 
 import com.bookshop.bookstore.model.User;
 import com.bookshop.bookstore.repository.UserRepository;
+
+import java.security.Principal;
+
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -36,6 +39,23 @@ public class AuthController {
     public String showLoginForm() {
         return "login"; 
     }
+
+    @GetMapping("/account")
+    public String viewAccount(Model model, Principal principal) {
+    User user = userRepository.findByUsername(principal.getName()).orElseThrow();
+    model.addAttribute("user", user);
+    return "account";
+    }
+
+    @PostMapping("/account")
+    public String updateAccount(@ModelAttribute User updatedUser, Principal principal) {
+    User user = userRepository.findByUsername(principal.getName()).orElseThrow();
+    user.setShippingAddress(updatedUser.getShippingAddress());
+    user.setPaymentMethod(updatedUser.getPaymentMethod());
+    userRepository.save(user);
+    return "redirect:/account";
+}
+
 
 
 }

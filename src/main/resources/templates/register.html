@@ -8,12 +8,10 @@
 
 <form th:action="@{/register}" th:object="${user}" method="post">
     <label>Username: <input type="text" th:field="*{username}" required/></label><br/>
-    <label>Password: <input type="password" th:field="*{password}" required/></label><br/>
-    <label>Shipping Address: <input type="text" th:field="*{shippingAddress}" /></label><br/>
-    <label>Payment Method: <input type="text" th:field="*{paymentMethod}" /></label><br/><br/>
-    
+    <label>Password: <input type="password" th:field="*{password}" required/></label><br/><br/>
     <button type="submit">Register</button>
 </form>
+
 
 <p><a th:href="@{/login}">Already have an account? Login here</a></p>
 </body>
