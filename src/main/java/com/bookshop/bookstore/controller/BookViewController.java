@@ -2,6 +2,9 @@ package com.bookshop.bookstore.controller;
 
 import com.bookshop.bookstore.model.Book;
 import com.bookshop.bookstore.repository.BookRepository;
+
+import jakarta.servlet.http.HttpSession;
+
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -37,6 +40,7 @@ public class BookViewController {
             @RequestParam(required = false) String searchTerm,
             @RequestParam(required = false, defaultValue = "title") String sortField,
             @RequestParam(required = false, defaultValue = "asc") String sortDir,
+            HttpSession session,
             Model model) {
 
         List<Book> books;
@@ -67,6 +71,12 @@ public class BookViewController {
         model.addAttribute("searchTerm", searchTerm);
         model.addAttribute("sortField", sortField);
         model.addAttribute("sortDir", sortDir);
+        Boolean addedToCart = (Boolean) session.getAttribute("addedToCart");
+        if (addedToCart != null && addedToCart) {
+            model.addAttribute("addedToCart", true);
+            session.removeAttribute("addedToCart");
+}
+
         return "books";
     }
 }
