@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head><title>Edit Stock (Admin)</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<h1> Edit Book Stock Levels</h1>
+
+<div th:if="${success}" class="alert">
+     Stock levels updated successfully!
+</div>
+
+<form th:action="@{/admin/update-stock}" method="post">
+    <table>
+        <thead>
+        <tr><th>Title</th><th>Current Stock</th><th>New Stock</th></tr>
+        </thead>
+        <tbody>
+        <tr th:each="book : ${books}">
+            <td th:text="${book.title}"></td>
+            <td th:text="${book.stock}"></td>
+            <td>
+                <input type="number" th:name="'stock_' + ${book.id}" min="0" th:value="${book.stock}" />
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <button type="submit">Save Changes</button>
+</form>
+
+<p><a th:href="@{/booklist}">⬅ Back to Book List</a></p>
+</body>
+</html>

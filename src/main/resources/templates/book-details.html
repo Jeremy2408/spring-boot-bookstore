@@ -18,6 +18,12 @@
         ⭐ <span th:text="${review.rating}"></span>/5 —
         <em th:text="${review.comment}"></em> 
         (by <strong th:text="${review.username}"></strong>)
+
+        <form th:if="${#authorization.expression('hasRole(''ADMIN'')')}" th:action="@{'/admin/delete-review/' + ${review.id}}"
+            method="post" style="display:inline;">
+            <input type="hidden" name="bookId" th:value="${book.id}" />
+            <button type="submit" onclick="return confirm('Delete this review?')"></button>
+        </form>
     </li>
 </ul>
 

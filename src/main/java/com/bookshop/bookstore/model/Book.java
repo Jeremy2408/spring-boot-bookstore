@@ -21,4 +21,7 @@ public class Book {
     private String isbn;
     private double price;
     private int stock;
+    
+    @Builder.Default
+    private boolean active = true;
 }

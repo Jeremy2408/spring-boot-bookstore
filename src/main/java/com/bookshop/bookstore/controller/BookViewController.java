@@ -60,8 +60,8 @@ public class BookViewController {
                     books = bookRepository.findByTitleContainingIgnoreCase(searchTerm);
             }
         } else {
-            books = bookRepository.findAll(Sort.by(
-                    sortDir.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC,
+            books = bookRepository.findByActiveTrue(Sort.by(
+                sortDir.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC,
                     sortField
             ));
         }

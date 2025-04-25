@@ -15,7 +15,8 @@ xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <p>
     <span sec:authorize="hasRole('ADMIN')">
-        <a th:href="@{/add-book}"> Add a New Book</a>
+        <a th:href="@{/add-book}"> Add a New Book</a> |
+        <a th:href="@{/admin/edit-stock}"> Edit Stock</a> |
         <a th:href="@{/admin/orders}"> All Orders</a>  |
     </span>
     <a th:href="@{/account}"> My Account</a> |
@@ -85,6 +86,11 @@ xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
                 <form th:action="@{'/cart/add/' + ${book.id}}" method="post" style="display:inline;">
                     <button type="submit">Add to Cart</button>
                 </form>
+                <span sec:authorize="hasRole('ADMIN')">
+                    <form th:action="@{'/admin/delete-book/' + ${book.id}}" method="post" style="display:inline;">
+                        <button type="submit" onclick="return confirm('Are you sure you want to delete this book?')">Delete</button>
+                    </form>
+                </span>
             </td>
         </tr>
         
