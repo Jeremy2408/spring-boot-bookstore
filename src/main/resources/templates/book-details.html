@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head><title th:text="${book.title}">Book Details</title></head>
+<body>
+<h1 th:text="${book.title}">Book Title</h1>
+<p><strong>Author:</strong> <span th:text="${book.author}"></span></p>
+<p><strong>Publisher:</strong> <span th:text="${book.publisher}"></span></p>
+<p><strong>Category:</strong> <span th:text="${book.category}"></span></p>
+<p><strong>Price:</strong> €<span th:text="${book.price}"></span></p>
+<p><strong>ISBN:</strong> <span th:text="${book.isbn}"></span></p>
+<p><strong>Stock:</strong> <span th:text="${book.stock}"></span></p>
+
+<h2>Reviews</h2>
+<ul>
+    <li th:each="review : ${reviews}">
+        ⭐ <span th:text="${review.rating}"></span>/5 —
+        <em th:text="${review.comment}"></em> 
+        (by <strong th:text="${review.username}"></strong>)
+    </li>
+</ul>
+
+<h3>Add a Review</h3>
+<form th:action="@{'/book/' + ${book.id} + '/review'}" th:object="${reviewForm}" method="post">
+    <label>Rating (1-5): 
+        <input type="number" min="1" max="5" th:field="*{rating}" required/>
+    </label><br/>
+    <label>Comment: 
+        <input type="text" th:field="*{comment}" required/>
+    </label><br/>
+    <button type="submit">Submit Review</button>
+</form>
+
+<p><a th:href="@{/booklist}">⬅ Back to Book List</a></p>
+</body>
+</html>
