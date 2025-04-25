@@ -6,10 +6,15 @@
 </head>
 <body>
 <h1>My Account</h1>
+<div th:if="${error}" class="alert" style="background-color: #f8d7da; color: #721c24;">
+    <p th:text="${error}"></p>
+</div>
+
 
 <form th:action="@{/account}" th:object="${user}" method="post">
     <label>Username: <input type="text" th:field="*{username}" readonly /></label><br/>
     <label>New Password: <input type="password" name="newPassword" /></label><br/>
+    <label>Confirm Password: <input type="password" name="confirmPassword" /></label><br/>
     <label>Shipping Address: <input type="text" th:field="*{shippingAddress}" /></label><br/>
     <label>Payment Method: <input type="text" th:field="*{paymentMethod}" /></label><br/><br/>
     <button type="submit">Save</button>

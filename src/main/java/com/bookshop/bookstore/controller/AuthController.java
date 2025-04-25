@@ -9,6 +9,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class AuthController {
@@ -49,7 +50,8 @@ public class AuthController {
 
     @PostMapping("/account")
     public String updateAccount(@ModelAttribute("user") User updatedUser,
-    @RequestParam(required = false) String newPassword,
+    @RequestParam(required = false) String newPassword,@RequestParam(required = false) String confirmPassword,
+    RedirectAttributes redirectAttributes,
     Principal principal) {
     User existing = userRepository.findByUsername(principal.getName()).orElseThrow();
 
@@ -57,6 +59,10 @@ public class AuthController {
     existing.setPaymentMethod(updatedUser.getPaymentMethod());
 
     if (newPassword != null && !newPassword.isBlank()) {
+        if (!newPassword.equals(confirmPassword)) {
+            redirectAttributes.addFlashAttribute("error", "Passwords do not match.");
+            return "redirect:/account";
+        }
         existing.setPassword(passwordEncoder.encode(newPassword));
     }
     userRepository.save(existing);
