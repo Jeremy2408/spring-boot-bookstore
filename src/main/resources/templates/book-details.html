@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head><title th:text="${book.title}">Book Details</title></head>
+<head>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <title th:text="${book.title}">Book Details</title></head>
 <body>
 <h1 th:text="${book.title}">Book Title</h1>
 <p><strong>Author:</strong> <span th:text="${book.author}"></span></p>
