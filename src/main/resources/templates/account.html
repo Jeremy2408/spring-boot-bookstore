@@ -8,10 +8,13 @@
 <h1>My Account</h1>
 
 <form th:action="@{/account}" th:object="${user}" method="post">
+    <label>Username: <input type="text" th:field="*{username}" readonly /></label><br/>
+    <label>New Password: <input type="password" name="newPassword" /></label><br/>
     <label>Shipping Address: <input type="text" th:field="*{shippingAddress}" /></label><br/>
     <label>Payment Method: <input type="text" th:field="*{paymentMethod}" /></label><br/><br/>
     <button type="submit">Save</button>
 </form>
+
 
 <p><a th:href="@{/booklist}">Back to Book List</a></p>
 </body>

@@ -48,12 +48,19 @@ public class AuthController {
     }
 
     @PostMapping("/account")
-    public String updateAccount(@ModelAttribute User updatedUser, Principal principal) {
-    User user = userRepository.findByUsername(principal.getName()).orElseThrow();
-    user.setShippingAddress(updatedUser.getShippingAddress());
-    user.setPaymentMethod(updatedUser.getPaymentMethod());
-    userRepository.save(user);
-    return "redirect:/account";
+    public String updateAccount(@ModelAttribute("user") User updatedUser,
+    @RequestParam(required = false) String newPassword,
+    Principal principal) {
+    User existing = userRepository.findByUsername(principal.getName()).orElseThrow();
+
+    existing.setShippingAddress(updatedUser.getShippingAddress());
+    existing.setPaymentMethod(updatedUser.getPaymentMethod());
+
+    if (newPassword != null && !newPassword.isBlank()) {
+        existing.setPassword(passwordEncoder.encode(newPassword));
+    }
+    userRepository.save(existing);
+    return "redirect:/account?updated=true";
 }
 
 
