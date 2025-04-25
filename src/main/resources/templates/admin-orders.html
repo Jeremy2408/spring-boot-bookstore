@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head><title>All Orders - Admin</title></head>
+<body>
+<h1> All Customer Orders (Admin View)</h1>
+
+<div th:if="${#lists.isEmpty(orders)}">
+    <p>No orders found.</p>
+</div>
+
+<div th:each="order : ${orders}">
+    <h3>
+        Order #<span th:text="${order.id}"></span> —
+        User: <strong th:text="${order.username}"></strong> —
+        <small th:text="${order.date}"></small>
+    </h3>
+    <table border="1">
+        <thead>
+        <tr><th>Book</th><th>Qty</th><th>Price</th></tr>
+        </thead>
+        <tbody>
+        <tr th:each="item : ${order.items}">
+            <td th:text="${item.book.title}"></td>
+            <td th:text="${item.quantity}"></td>
+            <td th:text="${item.priceAtPurchase}"></td>
+        </tr>
+        </tbody>
+    </table>
+    <br/>
+</div>
+
+<p><a th:href="@{/booklist}">⬅ Back to Book List</a></p>
+</body>
+</html>

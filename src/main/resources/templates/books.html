@@ -14,7 +14,8 @@ xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <p>
     <span sec:authorize="hasRole('ADMIN')">
-        <a th:href="@{/add-book}"> Add a New Book</a> |
+        <a th:href="@{/add-book}"> Add a New Book</a>
+        <a th:href="@{/admin/orders}"> All Orders</a>  |
     </span>
     <a th:href="@{/account}"> My Account</a> |
     <a th:href="@{/my-orders}"> My Orders</a> |

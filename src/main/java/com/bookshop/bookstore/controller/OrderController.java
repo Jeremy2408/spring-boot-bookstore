@@ -25,5 +25,12 @@ public class OrderController {
         model.addAttribute("orders", orders);
         return "my-orders";
     }
+
+    @GetMapping("/admin/orders")
+    public String viewAllOrders(Model model) {
+        List<BookOrder> orders = orderRepo.findAll();
+        model.addAttribute("orders", orders);
+        return "admin-orders";
+    }
 }
 
