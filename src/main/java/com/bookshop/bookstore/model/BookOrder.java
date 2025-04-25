@@ -22,6 +22,8 @@ public class BookOrder {
     private String username;
 
     private LocalDateTime date;
+    private double totalPrice;
+    private double originalTotal;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<OrderItem> items = new ArrayList<>();

@@ -6,6 +6,7 @@ import com.bookshop.bookstore.model.BookOrder;
 import com.bookshop.bookstore.model.OrderItem;
 import com.bookshop.bookstore.repository.BookRepository;
 import com.bookshop.bookstore.repository.OrderRepository;
+import com.bookshop.bookstore.strategy.*;
 
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
@@ -24,30 +25,30 @@ public class CartController {
     private final OrderRepository orderRepository;
 
     public CartController(BookRepository bookRepository, OrderRepository orderRepository ) {
-    this.bookRepository = bookRepository;
-    this.orderRepository = orderRepository;
-}
+        this.bookRepository = bookRepository;
+        this.orderRepository = orderRepository;
+    }
 
     @PostMapping("/add/{bookId}")
     public String addToCart(@PathVariable Long bookId, HttpSession session) {
-    Book book = bookRepository.findById(bookId).orElseThrow();
-    List<CartItem> cart = (List<CartItem>) session.getAttribute("cart");
-    if (cart == null) cart = new ArrayList<>();
+        Book book = bookRepository.findById(bookId).orElseThrow();
+        List<CartItem> cart = (List<CartItem>) session.getAttribute("cart");
+        if (cart == null) cart = new ArrayList<>();
 
-    Optional<CartItem> existing = cart.stream()
-            .filter(item -> item.getBook().getId().equals(bookId))
-            .findFirst();
+        Optional<CartItem> existing = cart.stream()
+                .filter(item -> item.getBook().getId().equals(bookId))
+                .findFirst();
 
-    if (existing.isPresent()) {
-        existing.get().setQuantity(existing.get().getQuantity() + 1);
-    } else {
-        cart.add(new CartItem(book, 1));
+        if (existing.isPresent()) {
+            existing.get().setQuantity(existing.get().getQuantity() + 1);
+        } else {
+            cart.add(new CartItem(book, 1));
+        }
+
+        session.setAttribute("cart", cart);
+        session.setAttribute("addedToCart", true); 
+        return "redirect:/booklist";
     }
-
-    session.setAttribute("cart", cart);
-    session.setAttribute("addedToCart", true); 
-    return "redirect:/booklist";
-}
 
 
     @GetMapping
@@ -70,46 +71,61 @@ public class CartController {
 
     @PostMapping("/checkout")
     public String checkout(HttpSession session, Principal principal, Model model) {
-    List<CartItem> cart = (List<CartItem>) session.getAttribute("cart");
-    if (cart == null || cart.isEmpty()) {
-        model.addAttribute("message", "Cart is empty!");
-        return "cart";
-    }
-
-    BookOrder order = BookOrder.builder()
-            .username(principal.getName())
-            .date(LocalDateTime.now())
-            .build();
-
-    List<OrderItem> orderItems = new ArrayList<>();
-
-    for (CartItem item : cart) {
-        Book book = item.getBook();
-        if (book.getStock() < item.getQuantity()) {
-            model.addAttribute("message", "Not enough stock for " + book.getTitle());
+        List<CartItem> cart = (List<CartItem>) session.getAttribute("cart");
+        if (cart == null || cart.isEmpty()) {
+            model.addAttribute("message", "Cart is empty!");
             return "cart";
         }
-        book.setStock(book.getStock() - item.getQuantity());
-        bookRepository.save(book); 
 
-        OrderItem orderItem = OrderItem.builder()
-                .order(order)
-                .book(book)
-                .quantity(item.getQuantity())
-                .priceAtPurchase(book.getPrice())
+        DiscountStrategy discountStrategy = new NoDiscountStrategy();
+        if (principal.getName().toLowerCase().startsWith("student")) {
+            discountStrategy = new StudentDiscountStrategy();
+        } else if (principal.getName().toLowerCase().startsWith("loyal")) {
+            discountStrategy = new LoyaltyDiscountStrategy();
+        }
+
+        double total = 0.0;
+        for (CartItem item : cart) {
+            total += item.getBook().getPrice() * item.getQuantity();
+        }
+        double discountedTotal = discountStrategy.applyDiscount(total);
+
+        BookOrder order = BookOrder.builder()
+                .username(principal.getName())
+                .date(LocalDateTime.now())
+                .originalTotal(total)
+                .totalPrice(discountedTotal) 
                 .build();
 
-        orderItems.add(orderItem);
+        List<OrderItem> orderItems = new ArrayList<>();
+
+        for (CartItem item : cart) {
+            Book book = item.getBook();
+            if (book.getStock() < item.getQuantity()) {
+                model.addAttribute("message", "Not enough stock for " + book.getTitle());
+                return "cart";
+            }
+            book.setStock(book.getStock() - item.getQuantity());
+            bookRepository.save(book);
+
+            OrderItem orderItem = OrderItem.builder()
+                    .order(order)
+                    .book(book)
+                    .quantity(item.getQuantity())
+                    .priceAtPurchase(book.getPrice())
+                    .build();
+
+            orderItems.add(orderItem);
+        }
+
+        order.setItems(orderItems);
+
+        orderRepository.save(order);
+
+        session.removeAttribute("cart");
+
+        model.addAttribute("order", order);
+        return "checkout-success";
     }
-
-    order.setItems(orderItems);
-
-    orderRepository.save(order);
-
-    session.removeAttribute("cart");
-
-    model.addAttribute("order", order);
-    return "checkout-success";
-}
 
 }

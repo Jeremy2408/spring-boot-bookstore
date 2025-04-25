@@ -3,7 +3,34 @@
 <head><title>Checkout Success</title></head>
 <body>
 <h1> Thank you for your order!</h1>
-<p>Your order was placed successfully on <span th:text="${order.date}">DATE</span>.</p>
-<p><a th:href="@{/booklist}">Back to Book List</a></p>
+
+<p>Your order was placed on <strong th:text="${order.date}"></strong>.</p>
+
+<h3>Order Summary</h3>
+<table border="1">
+    <thead>
+    <tr><th>Book</th><th>Qty</th><th>Unit Price</th><th>Subtotal</th></tr>
+    </thead>
+    <tbody>
+    <tr th:each="item : ${order.items}">
+        <td th:text="${item.book.title}"></td>
+        <td th:text="${item.quantity}"></td>
+        <td th:text="${item.priceAtPurchase}"></td>
+        <td th:text="${item.priceAtPurchase * item.quantity}"></td>
+    </tr>
+    </tbody>
+</table>
+
+<div th:if="${order.originalTotal > order.totalPrice}">
+    <p> A discount was applied to your order!</p>
+    <h3>Total after discount: €<span th:text="${#numbers.formatDecimal(order.totalPrice, 1, 'COMMA', 2, 'POINT')}"></span>
+    </h3>
+</div>
+
+<div th:unless="${order.originalTotal > order.totalPrice}">
+    <h3>Total: €<span th:text="${order.totalPrice}"></span></h3>
+</div>
+
+<p><a th:href="@{/booklist}">⬅ Back to Book List</a></p>
 </body>
 </html>
